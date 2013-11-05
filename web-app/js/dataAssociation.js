@@ -552,7 +552,7 @@ function waitWindowForAnalysis()
 function checkPluginJobStatus(jobName)	
 {	
 	var secCount = 0;
-	var pollInterval = 1000;   // 1 second
+	var pollInterval = 10000;   // 10 second
 	
 	var updateJobStatus = function(){
 		secCount++;
