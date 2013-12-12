@@ -258,20 +258,20 @@ function dropNumericOntoCategorySelection(source, e, data){
 function dropNumericOntoCategorySelection2(source, e, data, targetdiv)
 {
 	//Node must be folder so use children leafs
-	if(data.node.leaf==false) 
+	if(data.node.leaf==false)
 	{
 		//Keep track of whether all the nodes are numeric or not.
 		var allNodesNumeric = true
-		
+
 		//Keep track of whether the folder has any leaves.
 		var foundLeafNode = false
-		
+
 		//Loop through child nodes to add them to input.
 		for ( var i = 0; i<data.node.childNodes.length; i++)
 		{
 			//Grab the child node.
 			var child=data.node.childNodes[i];
-			
+
 			//This tells us whether it is a numeric or character node.
 			var val=child.attributes.oktousevalues;
 
@@ -279,64 +279,64 @@ function dropNumericOntoCategorySelection2(source, e, data, targetdiv)
 			if(val==='Y' && child.leaf==true)
 			{
 				//Reset the alpha/numeric flag so we don't get the popup for entering a value.
-				child.attributes.oktousevalues = "N"; 
+				child.attributes.oktousevalues = "N";
 
 				//Set the flag indicating we had a leaf node.
 				foundLeafNode = true;
-				
+
 				//Add the item to the input.
 				var concept = createPanelItemNew(targetdiv, convertNodeToConcept(child));
-				
+
 				//Set back to original value
-				child.attributes.oktousevalues=val; 
+				child.attributes.oktousevalues=val;
 			}
 			else if(val==='N' && child.leaf==true)
 			{
 				//Set the flag indicating we had a leaf node.
-				foundLeafNode = true;				
-				
+				foundLeafNode = true;
+
 				//If we find a non-numeric node, set our flag.
 				allNodesNumeric = false
 			}
-			
+
 		}
 
 		//If no leaf nodes found, alert the user.
 		if(!foundLeafNode)
 		{
 			Ext.Msg.alert('No Nodes in Folder','When dragging in a folder you must select a folder that has leaf nodes directly under it.');
-		}		
-		
+		}
+
 		//If we found a non numeric node, alert the user.
 		if(!allNodesNumeric && foundLeafNode)
 		{
 			Ext.Msg.alert('Numeric Input Required','Please select numeric concepts only for this input. Numeric concepts are labeled with a "123" in the tree.');
 		}
 	}
-	else 
+	else
 	{
 		//If we dragged a numeric leaf, add it to the input. Otherwise alert the user.
 		if(data.node.attributes.oktousevalues==='Y')
 		{
 			//This tells us whether it is a numeric or character node.
 			var val=data.node.attributes.oktousevalues;
-			
+
 			//Reset the alpha/numeric flag so we don't get the popup for entering a value.
 			data.node.attributes.oktousevalues="N";
-			
+
 			//Add the item to the input.
 			var concept = createPanelItemNew(targetdiv, convertNodeToConcept(data.node));
-			
+
 			//Set back to original value
 			data.node.attributes.oktousevalues=val;
 		}
 		else
 		{
 			Ext.Msg.alert('Numeric Input Required','Please select numeric concepts only for this input. Numeric concepts are labeled with a "123" in the tree.');
-		}		
+		}
 	}
 	return true;
-} 
+}
 
 
 //This function fires when an item is dropped onto one of the
@@ -470,7 +470,7 @@ function setupSubsetIds(formParams){
 function readConceptVariables(divIds){
 	var variableConceptCode = ""
 	var variableEle = Ext.get(divIds);
-	
+
 	//If the variable element has children, we need to parse them and concatenate their values.
 	if(variableEle && variableEle.dom.childNodes[0])
 	{
@@ -478,13 +478,35 @@ function readConceptVariables(divIds){
 		for(nodeIndex = 0; nodeIndex < variableEle.dom.childNodes.length; nodeIndex++)
 		{
 			//If we already have a value, add the seperator.
-			if(variableConceptCode != '') variableConceptCode += '|' 
-			
+			if(variableConceptCode != '') variableConceptCode += '|'
+
 			//Add the concept path to the string.
 				variableConceptCode += getQuerySummaryItem(variableEle.dom.childNodes[nodeIndex]).trim()
 		}
 	}
 	return variableConceptCode;
+}
+function readConceptVariables2(divIds){
+    var variableConceptCode = ""
+    var variableCode = ""
+    var variableEle = Ext.get(divIds);
+
+    //If the variable element has children, we need to parse them and concatenate their values.
+    if(variableEle && variableEle.dom.childNodes[0])
+    {
+        //Loop through the variables and add them to a comma seperated list.
+        for(nodeIndex = 0; nodeIndex < variableEle.dom.childNodes.length; nodeIndex++)
+        {
+            //If we already have a value, add the seperator.
+            if(variableConceptCode != '') 		variableConceptCode += '|'
+            if(variableCode != '') 				variableCode += '|'
+
+            //Add the concept path to the string.
+            variableConceptCode 			+= getQuerySummaryItem(variableEle.dom.childNodes[nodeIndex]).trim()
+            variableCode 					+= getQueryCdItem(variableEle.dom.childNodes[nodeIndex]).trim();
+        }
+    }
+    return [variableConceptCode,variableCode];
 }
 
 function submitJob(formParams)
@@ -602,8 +624,9 @@ function checkPluginJobStatus(jobName)
 	var checkTask =	{
 			run: updateJobStatus,
 	  	    interval: pollInterval	
-	}	
-	Ext.TaskMgr.start(checkTask);
+	}
+    setTimeout(function(){Ext.TaskMgr.start(checkTask)},3000);
+	//Ext.TaskMgr.start(checkTask);
 }
 
 function loadModuleOutput()
