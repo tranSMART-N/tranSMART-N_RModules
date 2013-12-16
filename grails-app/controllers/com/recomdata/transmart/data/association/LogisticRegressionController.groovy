@@ -41,7 +41,7 @@ class LogisticRegressionController {
 
 		String tempDirectory = RModulesOutputRenderService.tempDirectory
 		String tempSummaryFolder = RModulesOutputRenderService.config.RModules.temporaryImageFolder+ File.separator + "${jobName}"
-		
+
 		//Create a directory object so we can pass it to be traversed.
 		def tempDirectoryFile = new File(tempDirectory)
 		String rVersionInfo = ""

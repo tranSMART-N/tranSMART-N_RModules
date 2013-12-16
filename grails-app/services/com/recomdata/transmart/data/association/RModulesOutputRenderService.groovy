@@ -17,6 +17,7 @@
 package com.recomdata.transmart.data.association
 
 import org.apache.commons.io.FileUtils
+import org.codehaus.groovy.grails.commons.ConfigurationHolder;
 
 class RModulesOutputRenderService {
 
@@ -28,7 +29,7 @@ class RModulesOutputRenderService {
 	def jobName = ""
 	def jobTypeName = ""
 	def zipLink = ""
-	
+    def config = ConfigurationHolder.config
     //<editor-fold desc="Configuration fetching">
 		
     /**
@@ -207,4 +208,130 @@ class RModulesOutputRenderService {
         }
         true
     }
+    def parseVersionFile()
+    {
+        def tempDirectoryFile = new File(tempDirectory)
+        String versionData = fileParseLoop(tempDirectoryFile,/.*sessionInfo.*\.txt/,/.*sessionInfo(.*)\.txt/,parseVersionFileClosure)
+
+        return versionData
+    }
+
+    def parseLegendTable()
+    {
+        def tempDirectoryFile = new File(tempDirectory)
+        String legendData = fileParseLoop(tempDirectoryFile,/.*legend.*\.txt/,/.*legend(.*)\.txt/,parseLegendTableClosure)
+
+        return legendData
+    }
+
+    def parseVersionFileClosure = {
+        statsInStr ->
+
+            //Buffer that will hold the HTML we output.
+            StringBuffer buf = new StringBuffer();
+
+            buf.append("<br /><a href='#' onclick='\$(\"versionInfoDiv\").toggle()'><span class='AnalysisHeader'>R Version Information</span></a><br /><br />")
+
+            buf.append("<div id='versionInfoDiv' style='display: none;'>")
+
+            //This will tell us if we are printing the contents of the package or the session info. We will print the package contents in a table.
+            Boolean packageCommand = false
+            Boolean firstPackageLine = true
+
+            statsInStr.eachLine
+                    {
+
+                        if(it.contains("||PACKAGEINFO||"))
+                        {
+                            packageCommand = true
+                            return;
+                        }
+
+                        if(!packageCommand)
+                        {
+                            buf.append(it)
+                            buf.append("<br />")
+                        }
+                        else
+                        {
+                            def currentLine = it.split("\t")
+
+                            if(firstPackageLine)
+                            {
+                                buf.append("<br /><br /><table class='AnalysisResults'>")
+                                buf.append("<tr>")
+                                currentLine.each()
+                                        {
+                                            currentSegment ->
+
+                                                buf.append("<th>${currentSegment}</th>")
+
+                                        }
+                                buf.append("</tr>")
+
+                                firstPackageLine = false
+                            }
+                            else
+                            {
+                                buf.append("<tr>")
+                                currentLine.each()
+                                        {
+                                            currentSegment ->
+
+                                                buf.append("<td>${currentSegment}</td>")
+
+                                        }
+                                buf.append("</tr>")
+                            }
+                        }
+                    }
+
+            buf.append("</table>")
+            buf.append("</div>")
+
+            buf.toString();
+    }
+
+
+
+    def parseLegendTableClosure =
+        {
+            legendInStr ->
+
+                //Buffer that will hold the HTML we output.
+                StringBuffer buf = new StringBuffer();
+
+                buf.append("<span class='AnalysisHeader'>Legend</span><br /><br />")
+                buf.append("<table class='AnalysisResults'>")
+
+                legendInStr.eachLine
+                        {
+
+                            //Start a new row.
+                            buf.append("<tr>")
+
+                            //Split each line.
+                            String[] strArray = it.split("\t");
+
+                            Integer cellCounter = 0;
+
+                            strArray.each
+                                    {
+                                        tableValue ->
+
+                                            tableValue = tableValue.replace("|","<br />")
+
+                                            buf.append("<th>${tableValue}</th>")
+                                    }
+
+                            //End this row.
+                            buf.append("</tr>")
+                        }
+
+                buf.append("</table><br />")
+                //################################
+
+                buf.toString();
+        }
+
 }

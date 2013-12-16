@@ -334,3 +334,10 @@ platform.type
 	return(dataToFilter)
 }
 #########################
+#This is a conveniance method that will return the list of columns in the clinical data export file. Keeping it in one place will prevent us from having to changing all the workflows when we add a column.
+defaultColumnList <-
+function
+()
+{
+	return(c("PATIENT_NUM","SUBSET","CONCEPT_CODE","CONCEPT_PATH_SHORT","VALUE","CONCEPT_PATH","ENCOUNTER_NUM","LINK_TYPE"))
+}

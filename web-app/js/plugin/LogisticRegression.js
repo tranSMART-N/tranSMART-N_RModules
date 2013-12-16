@@ -17,9 +17,9 @@
  *
  ******************************************************************/
 function submitLogisticRegressionJob(form){
-	var dependentVariableConceptCode = readConceptVariables("divDependentVariable")[0];
-	var independentVariableConceptCode = readConceptVariables("divIndependentVariable")[0];
-	var groupByVariableConceptCode = readConceptVariables("divGroupByVariable")[0];
+	var dependentVariableConceptCode = readConceptVariables2("divDependentVariable")[0];
+	var independentVariableConceptCode = readConceptVariables2("divIndependentVariable")[0];
+	var groupByVariableConceptCode = readConceptVariables2("divGroupByVariable")[0];
 	var variablesConceptCode = dependentVariableConceptCode+"|"+groupByVariableConceptCode;
 	
 	var formParams = {variablesConceptPaths:variablesConceptCode, 
