@@ -40,29 +40,30 @@ gene.aggregate,
 SNPFile = '',
 SNPType = '',
 fullConcept = FALSE,
-conceptColumn = FALSE
+conceptColumn = FALSE,
+encounterColumn = FALSE
 )
 {
 	print("     -------------------")
-	print(Sys.time())
 	print("     dataBuilders.R")
-	sprintf("     BUILDING DATA: %s", concept.type)
+	print("     BUILDING DATA")
+	print(paste("     Concept - ",concept,sep=""))
 	
-	#Depending on the type of data we are using we use a different extraction method.
+	#Depedning on the type of data we are using we use a different extraction method.
 	if(concept.type == "CLINICAL")
 	{
 		#Extract the concepts from the clinical data file.
-		axisValueMatrix <- extractConcepts(splitData,concept,fullConcept,conceptColumn=conceptColumn)
+		axisValueMatrix <- extractConcepts(splitData,concept,fullConcept,conceptColumn=conceptColumn, encounterColumn=encounterColumn)
 	}
 	else if(concept.type == "MRNA")
 	{
 		axisValueMatrix <- gexBuilder(	GEXFile = GEXFile,
-						sampleType = sampleType,
-						timepointType = timepointType,
-						tissueType = tissueType,
-						platform.type = platform.type,
-						gene.list = gene.list,
-						gene.aggregate = gene.aggregate)
+										sampleType = sampleType,
+										timepointType = timepointType,
+										tissueType = tissueType,
+										platform.type = platform.type,
+										gene.list = gene.list,
+										gene.aggregate = gene.aggregate)
 	}
 	else if(concept.type == "SNP")
 	{
@@ -335,9 +336,9 @@ platform.type
 }
 #########################
 #This is a conveniance method that will return the list of columns in the clinical data export file. Keeping it in one place will prevent us from having to changing all the workflows when we add a column.
-defaultColumnList <-
-function
-()
+defaultColumnList <-  function()
 {
 	return(c("PATIENT_NUM","SUBSET","CONCEPT_CODE","CONCEPT_PATH_SHORT","VALUE","CONCEPT_PATH","ENCOUNTER_NUM","LINK_TYPE"))
 }
+
+
