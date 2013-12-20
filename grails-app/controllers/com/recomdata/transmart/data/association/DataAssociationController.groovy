@@ -62,8 +62,10 @@ class DataAssociationController {
         servletContext.contextPath+pluginContextPath+'/js/plugin/LogisticRegression.js',
         servletContext.contextPath+pluginContextPath+'/js/plugin/ForestPlot.js',
         servletContext.contextPath+pluginContextPath+'/js/plugin/BaselineComparison.js',
-        servletContext.contextPath+pluginContextPath+'/js/plugin/AnalysisComparison.js'
-
+        servletContext.contextPath+pluginContextPath+'/js/plugin/AnalysisComparison.js',
+        servletContext.contextPath+pluginContextPath+'/js/plugin/TableWithFisherNz.js',
+        servletContext.contextPath+pluginContextPath+'/js/plugin/SurvivalAnalysisNz.js',
+        servletContext.contextPath+pluginContextPath+'/js/plugin/BoxPlotNz.js'
         ]
 		
 

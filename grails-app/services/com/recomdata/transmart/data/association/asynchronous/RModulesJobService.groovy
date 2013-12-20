@@ -58,7 +58,7 @@ class RModulesJobService implements Job {
 	def jobName
 
 	File jobInfoFile
-
+    File commandListFile
 
 
 	def private initJob(jobExecutionContext) throws Exception {
@@ -82,29 +82,32 @@ class RModulesJobService implements Job {
 		}
 	}
 
-	def private setupTempDirsAndJobFile() throws Exception {
-		try {
-			//Initialize the jobTmpDirectory which will be used during bundling in ZipUtil
-			jobTmpDirectory = tempFolderDirectory + File.separator + "${jobDataMap.jobName}" + File.separator
-			jobTmpDirectory = jobTmpDirectory.replace("\\","\\\\")
-			jobTmpWorkingDirectory = jobTmpDirectory + "workingDirectory"
+    private setupTempDirsAndJobFile() throws Exception {
+        try {
+            //Initialize the jobTmpDirectory which will be used during bundling in ZipUtil
+            jobTmpDirectory = tempFolderDirectory + File.separator + "${jobDataMap.jobName}" + File.separator
+            jobTmpDirectory = jobTmpDirectory.replace("\\","\\\\")
+            jobTmpWorkingDirectory = jobTmpDirectory + "workingDirectory"
 
-			//Try to make the working directory.
-			File jtd = new File(jobTmpWorkingDirectory)
-			jtd.mkdirs();
+            //Try to make the working directory.
+            File jtd = new File(jobTmpWorkingDirectory)
+            jtd.mkdirs();
 
-			//Create a file that will have all the job parameters for debugging purposes.
-			jobInfoFile = new File(jobTmpWorkingDirectory + File.separator + 'jobInfo.txt')
+            //Create a file that will have all the job parameters for debugging purposes.
+            jobInfoFile = new File(jobTmpWorkingDirectory + File.separator + 'jobInfo.txt')
 
-			//Write our parameters to the file.
-			jobInfoFile.write("Parameters" + System.getProperty("line.separator"))
-			jobDataMap.getKeys().each {_key ->
-				jobInfoFile.append("\t${_key} -> ${jobDataMap[_key]}" + System.getProperty("line.separator"))
-			}
-		} catch (Exception e) {
-			throw new Exception('Failed to create Temporary Directories and Job Info File, maybe there is not enough space on disk. Please contact an administrator.', e);
-		}
-	}
+            //Create a file that will have all the commands being run, with their parameters replaced with actual values.
+            commandListFile = new File(jobTmpWorkingDirectory + File.separator + 'jobCommands.txt')
+
+            //Write our parameters to the file.
+            jobInfoFile.write("Parameters" + System.getProperty("line.separator"))
+            jobDataMap.getKeys().each {_key ->
+                jobInfoFile.append("\t${_key} -> ${jobDataMap[_key]}" + System.getProperty("line.separator"))
+            }
+        } catch (Exception e) {
+            throw new Exception('Failed to create Temporary Directories and Job Info File, maybe there is not enough space on disk. Please contact an administrator.', e);
+        }
+    }
 
 	@Override
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
@@ -318,9 +321,8 @@ class RModulesJobService implements Job {
 		    }
 
 			log.info("Attempting following R Command : " + reformattedCommand)
-
-			REXP r = c.parseAndEval("try("+reformattedCommand+",silent=TRUE)");
-
+            commandListFile.append(reformattedCommand + System.getProperty("line.separator"))
+            REXP r = c.parseAndEval("try("+reformattedCommand+",silent=TRUE)");
 			if (r.inherits("try-error"))
 			{
 				//Grab the error R gave us.
