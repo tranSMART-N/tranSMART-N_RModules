@@ -58,15 +58,21 @@ gpl.independent= ''
 	print("BuildANOVAData.R")
 	print("BUILDING ANOVA DATA")
 
-    library(nzr)     #Netezza library
-	if(nzIsConnected == FALSE) nzConnect('192.168.48.130','admin','password','nza')
+    # load Netezza library
+    library(nzr)
+    nzDisconnect()
+	nzConnect('biomart_user', 'biomart_user', '172.20.5.8', 'tsmrt')
 
-	#Read the input file.
+	#Read the input file from a table or view.
 	#dataFile <- data.frame(read.delim(input.dataFile));
-	datafile <- as.data.frame(nz.data.frame(input.dataFile))
+	tableName <-  extractTableName(input.dataFile) ;
+    dataFile <- as.data.frame(nz.data.frame(tableName));
+    nzQuery(c("drop view ", tableName));
 
 	#Set the column names.
-	colnames(dataFile) <- c("PATIENT_NUM","SUBSET","CONCEPT_CODE","CONCEPT_PATH_SHORT","VALUE","CONCEPT_PATH")	
+	#colnames(dataFile) <- c("PATIENT_NUM","SUBSET","CONCEPT_CODE","CONCEPT_PATH_SHORT","VALUE","CONCEPT_PATH")
+    colnames(dataFile)[1] <- c("PATIENT_ID");
+    colnames(dataFile)[7] <- c("PATIENT_NUM");
 
 	#Split the data by the CONCEPT_CD.
 	splitData <- split(dataFile,dataFile$CONCEPT_PATH);
