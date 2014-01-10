@@ -48,16 +48,26 @@ snptype.category = ''
 	print("-------------------")
 	print("BuildSurvivalData.R")
 	print("BUILDING SURVIVAL DATA")
-	library(nzr)
-    	if(nzIsConnected == FALSE) nzConnect('192.168.48.130','admin','password','nza')
+
+	# load Netezza library
+    library(nzr)
+    nzDisconnect()
+    nzConnect('biomart_user', 'biomart_user', '172.20.5.8', 'tsmrt')
 
     #Read the input file.
     #dataFile <- data.frame(read.delim(input.dataFile));
-    datafile <- as.data.frame(nz.data.frame(input.dataFile))
+    #datafile <- as.data.frame(nz.data.frame(input.dataFile))
+
+    tableName <- extractTableName(input.dataFile);
+    dataFile <- as.data.frame(nz.data.frame(tableName));
+    nzQuery(c("drop view ", tableName));
+    nzDisconnect();
 
 	#Set the column names.
-	colnames(dataFile) <- c("PATIENT_NUM","SUBSET","CONCEPT_CODE","CONCEPT_PATH_SHORT","VALUE","CONCEPT_PATH")
-	
+	#colnames(dataFile) <- c("PATIENT_NUM","SUBSET","CONCEPT_CODE","CONCEPT_PATH_SHORT","VALUE","CONCEPT_PATH")
+	colnames(dataFile)[1] <- c("PATIENT_ID");
+    colnames(dataFile)[7] <- c("PATIENT_NUM");
+
 	#Split the data by the CONCEPT_CD.
 	splitData <- split(dataFile,dataFile$CONCEPT_PATH);
 	
