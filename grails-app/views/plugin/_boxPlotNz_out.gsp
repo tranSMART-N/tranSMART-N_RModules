@@ -31,7 +31,7 @@
 	
 		<br />
 		<br />		
-		<span class='AnalysisHeader'>Box Plot</span><br /><br />
+		<span class='AnalysisHeader'>Box Plot (NZR)</span><br /><br />
 		
 		<g:each var="location" in="${imageLocations}">
 	    	<img src='${location}'  width="600" height="600"/> <br />

@@ -31,7 +31,7 @@
 	<form>
 		<br />
 		<br />	
-		<span class='AnalysisHeader'>Survival Curve</span><br /><br />
+		<span class='AnalysisHeader'>Survival Curve (NZR)</span><br /><br />
 		
 		<g:each var="location" in="${imageLocation}">
 			<img src='${location}'></>
