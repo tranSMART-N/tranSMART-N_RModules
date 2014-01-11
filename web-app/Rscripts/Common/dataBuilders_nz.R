@@ -153,9 +153,12 @@ GEXData = ''
         nzDisconnect()
         nzConnect('biomart_user', 'biomart_user', '172.20.5.8', 'tsmrt')
 
-        tableName <- extractTableName(GEXFile);
-        mrnaData <- as.data.frame(nz.data.frame(tableName));
-        nzQuery(c("drop table ", tableName));
+        mRNATableName <- extractTableName(GEXFile);
+        sampleTableName <- c(mRNATableName, "_SAMPLE");
+        query <- c("select t1.sourcesystem_cd as patient_num,t2.sample_type,t2.TIMEPOINT,t2.TISSUE_TYPE,t1.gpl_id,t1.assay_id,t1.RAW_INTENSITY as value,t1.zscore,t1.LOG_INTENSITY as log2ed,t1.probe_id,t1.PROBESET_ID,t1.gene_id,t1.gene_symbol,t1.SEARCH_KEYWORD_ID as search_id from ",mRNATableName," t1, ", sampleTableName, " t2 where t1.assay_id=t2.assay_id");
+        mrnaData <- nzQuery(query);
+        nzQuery(c("drop table ", sampleTableName));
+        nzQuery(c("drop table ", mRNATableName));
         nzDisconnect();
 		#################################################################
 		##############################################
@@ -369,6 +372,7 @@ defaultColumnList <-  function()
 # extract and form a table/view name for nzr using  from inputFile
 #**********************************************************************
 extractTableName <- function(inputFile){
+    inputFile <- gsub('//', '/', inputFile);
     str <- strsplit(inputFile, "/")
     for(idx in 1:length(str[[1]]) ) {
         if(str[[1]][idx] == "jobs") {

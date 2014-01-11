@@ -132,8 +132,8 @@ snptype.category = ''
 	colnames(finalData) <- finalColumnNames
 	
 	#Make sure we have the value levels for the CENSOR column. This may throw a warning for duplicate values, but we can ignore it.
-	finalData$CENSOR <- factor(finalData$CENSOR, levels = c(levels(finalData$CENSOR), "1"))
-	finalData$CENSOR <- factor(finalData$CENSOR, levels = c(levels(finalData$CENSOR), "0"))
+	finalData$CENSOR <- factor(finalData$CENSOR, levels = c(levels(as.factor(finalData$CENSOR)), "1"))
+	finalData$CENSOR <- factor(finalData$CENSOR, levels = c(levels(as.factor(finalData$CENSOR)), "0"))
 
 	#Replace the NA values in the CENSOR column with 0 (Censored).
 	finalData$'CENSOR'[is.na(finalData$'CENSOR')] <- 0

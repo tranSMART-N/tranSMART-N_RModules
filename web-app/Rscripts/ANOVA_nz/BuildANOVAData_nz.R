@@ -68,6 +68,7 @@ gpl.independent= ''
 	tableName <-  extractTableName(input.dataFile) ;
     dataFile <- as.data.frame(nz.data.frame(tableName));
     nzQuery(c("drop view ", tableName));
+    nzDisconnect()
 
 	#Set the column names.
 	#colnames(dataFile) <- c("PATIENT_NUM","SUBSET","CONCEPT_CODE","CONCEPT_PATH_SHORT","VALUE","CONCEPT_PATH")
