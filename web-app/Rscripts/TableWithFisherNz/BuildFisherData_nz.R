@@ -66,7 +66,6 @@ snptype.independent = ''
 
     #Read the input file.
     #dataFile <- data.frame(read.delim(input.dataFile));
-    #datafile <- as.data.frame(nz.data.frame(input.dataFile))
     tableName <- extractTableName(input.dataFile);
     dataFile <- as.data.frame(nz.data.frame(tableName));
     nzQuery(c("drop view ", tableName));
