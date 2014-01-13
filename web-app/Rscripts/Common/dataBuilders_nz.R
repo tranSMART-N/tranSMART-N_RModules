@@ -83,7 +83,7 @@ encounterColumn = FALSE
         colnames(snpData)[1] <- c("PROBE.ID")
         colnames(snpData)[5] <- c("SAMPLE.TYPE")
         colnames(snpData)[7] <- c("TISSUE.TYPE")
-        colnames(snpData)[3] <- c("PATIENT.ID")
+        colnames(snpData)[10] <- c("PATIENT.ID")
         colnames(snpData)[11] <- c("GPL.ID")
         colnames(snpData)[12] <- c("SEARCH_ID")
 
